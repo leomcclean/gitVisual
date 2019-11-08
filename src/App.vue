@@ -1,28 +1,50 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+	<div id="app">
+		<div class="navbar">
+			<h1>gitVisual</h1>
+			<input @submit="search" type="text" class="search" placeholder="find repository">
+		</div>
+		<div class="user" >
+			<p></p>
+		</div>
+	</div>
 </template>
-
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
-export default {
-  name: 'app',
-  components: {
-    HelloWorld
-  }
-}
+	const Octokit = require("@octokit/rest")
+	const octokit = new Octokit(
+		{
+			auth: process.env.PERSONAL_AUTH,
+			userAgent: "gitVisual 1.0 by leomcclean",
+			baseUrl: 'https://api.github.com'
+		});
+	export default
+	{
+		name: 'app',
+		data: function()
+		{
+			return
+			{
+				username: "",
+				userdata: null
+			}
+		},
+		methods:
+		{
+			searchUsers: function()
+			{
+				if(this.username != "")
+				{
+					octokit.users.getByUsername({username: this.username})
+				}
+				
+			}
+		}
+	};
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+	@import './assets/css/base.css';
 </style>
+
+
+
