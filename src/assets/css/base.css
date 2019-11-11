@@ -9,6 +9,24 @@ body
 	background-color: #FFFFFF;
 	margin: 0px;
 }
+h1
+{
+	color: #FFFFFF;
+	margin: 0px;
+	padding: 10px;
+	font-size: 2em;
+	display: inline;
+}
+a
+{
+	text-decoration: none;
+}
+hr
+{
+	color: #FFFFFF;
+	width: 95%;
+	margin-top: 0px;
+}
 .navbar
 {
 	background-color: #373F51;
@@ -17,21 +35,6 @@ body
 	width: 100%;
 	margin: 0px;
 	border: 0px;
-}
-.user
-{
-	display: flex;
-	margin: 10px;
-	background-color: #373F51;
-	color: #FFFFFF;
-}
-h1
-{
-	color: #FFFFFF;
-	margin: 0px;
-	padding: 10px;
-	font-size: 2em;
-	display: inline;
 }
 .search
 {
@@ -42,13 +45,158 @@ h1
 	width: 300px;
 	position: absolute;
 	top: 10%;
-	left: calc(100% - 327px);
+	left: calc(100% - 430px);
 	float: right;
 	background-color: #FFFFFF;
-	color: #D8DBE2;
+	color: #A9BCD0;
 	outline: none;
 }
 .search:focus
 {
 	color: #04080F;
+}
+.submit
+{
+	outline: 0px;
+	color: #FFFFFF;
+	background-color: #373F51;
+	height: 1.75em;
+	padding: 7px;
+	font-size: 1.6em;
+	width: 100px;
+	margin-left: 10px;
+	position: absolute;
+	top: 10%;
+	left: calc(100% - 120px);
+	border: none;
+}
+.submit:hover
+{
+	color: #A9BCD0;
+}
+.picture
+{
+	width: 200px;
+	height: 200px;
+	margin: 10px;
+	margin-bottom: 5px;
+	padding: 10px;
+	background-color: #5B6170;
+}
+.image
+{
+	width: 200px;
+	height: 200px;
+	margin: auto;
+}
+.user
+{
+	display: block;
+	width: 400px;
+	height: auto;
+	margin: 10px;
+	margin-bottom: 5px;
+	padding: 10px;
+	background-color: #5B6170;
+	color: #FFFFFF;
+}
+.realname
+{
+	display: table;
+	margin: 0px;
+	margin-right: 0px;
+	font-size: 2em;
+	color: #FFFFFF;
+	height: auto;
+}
+.username
+{
+	display: table;
+	margin: 0px;
+	margin-right: 0px;
+	font-size: 1.2em;
+	color: #FFFFFF;
+	padding-top: 0px;
+	height: auto;
+}
+.bio
+{
+	display: table;
+	margin: 0px;
+	margin-right: 0px;
+	font-size: .8em;
+	color: #FFFFFF;
+	padding-top: 10px;
+	height: auto;
+}
+.repoDiv
+{
+	display: block;
+	width: 400px;
+	height: auto;
+	margin: 10px;
+	margin-bottom: 5px;
+	background-color: #5B6170;
+	color: #FFFFFF;
+	padding: 10px;
+}
+.rTitle
+{
+	margin: 0px;
+	color: #FFFFFF;
+	font-size: 1.2em;
+	padding-bottom: 5px;
+}
+.repoCount
+{
+	display: table;
+	margin: 0px;
+	margin-right: 0px;
+	font-size: .8em;
+	color: #FFFFFF;
+	padding: 0px;
+	height: auto;
+}
+.repoToggle
+{
+	color: #FFFFFF;
+	background-color: #5B6170;
+	padding: 0px;
+	padding-top: 5px;
+	border: none;
+	outline: none;
+	font-size: 1.2em;
+}
+.repoToggle:hover
+{
+	color: #A9BCD0;
+}
+.repolist
+{
+	padding: 0px;
+	display: block;
+	margin: 0px;
+	list-style-type: none;
+}
+.repolink
+{
+	padding: 2px;
+	font-size: 1em;
+	color: #FFFFFF;
+}
+.repolink:hover
+{
+	background-color: #A9BCD0;
+	border-radius: 5px;
+}
+.repos
+{
+	padding-top: 5px;
+	padding-bottom: 5px;
+	border-bottom: 1px solid #FFFFFF;
+}
+.repos:last-child
+{
+	padding-bottom: 0px;
+	border-bottom: none;
 }
