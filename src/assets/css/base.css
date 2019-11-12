@@ -74,6 +74,20 @@ hr
 {
 	color: #A9BCD0;
 }
+.body
+{
+	display: inline-flex;
+	flex-direction: row;
+	width: auto;
+	height: auto;
+}
+.result_body
+{
+	display: inline-flex;
+	flex-direction: column;
+	width: auto;
+	height: auto;
+}
 .picture
 {
 	width: 200px;
@@ -199,4 +213,16 @@ hr
 {
 	padding-bottom: 0px;
 	border-bottom: none;
+}
+.gDiv
+{
+	display: inline-flex;
+	width: 400px;
+	height: 400px;
+	margin: 10px;
+	margin-left: 0px;
+	margin-bottom: 5px;
+	padding: 10px;
+	background-color: #5B6170;
+	color: #FFFFFF;
 }

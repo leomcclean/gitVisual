@@ -5,23 +5,30 @@
 			<input v-model= "username" type="text" class="search" placeholder="find user">
 			<button v-on:click="find" class="submit" type="button">search</button>
 		</div>
-		<div v-if="results" class="picture">
-			<img class="image" v-bind:src="user.avatar_url" alt="Profile Picture">
-		</div>
-		<div v-if="results" class="user" >
-			<h2 class="realname">{{ user.name}}</h2>
-			<h2 class="username">{{ user.login }}</h2>
-			<p class="bio">{{user.bio }}</p>
-		</div>
-		<div v-if="results" class="repoDiv">
-			<h2 class="rTitle">Repositories</h2>
-			<p class="repoCount">{{ "Number of Public Repositories: " + user.public_repos}}</p>
-			<ol v-if="showRepos" class="repolist">
-				<li class="repos" v-for="repo in repos" v-bind:key="repo.name">
-					<a class="repolink" v-bind:href="repo.html_url">{{ repo.name }}</a>
-				</li>
-			</ol>
-			<button v-on:click="revealRepos" class="repoToggle" type="button">{{ repoString }}</button>
+		<div v-if="results" class="body">
+			<div class="result_body">
+				<div class="picture">
+					<img class="image" v-bind:src="user.avatar_url" alt="Profile Picture">
+				</div>
+				<div class="user" >
+					<h2 class="realname">{{ user.name}}</h2>
+					<h2 class="username">{{ user.login }}</h2>
+					<p class="bio">{{ bio }}</p>
+				</div>
+				<div class="repoDiv">
+					<h2 class="rTitle">Repositories</h2>
+					<p class="repoCount">{{ "Number of Public Repositories: " + user.public_repos }}</p>
+					<ol v-if="showRepos" class="repolist">
+						<li class="repos" v-for="repo in repos" v-bind:key="repo.name">
+							<a class="repolink" v-on:click="setRepo(repo.name);">{{ repo.name }}</a>
+						</li>
+					</ol>
+					<button v-on:click="revealRepos" class="repoToggle" type="button">{{ repoString }}</button>
+				</div>
+			</div>
+			<div v-if="gClick" class="graph_body">
+				<Graph :result="repoInfo"></Graph>
+			</div>
 		</div>
 	</div>
 </template>
@@ -31,22 +38,59 @@
 	import Graph from "./components/Graph.vue"
 	export default
 	{
+		name: "app",
+		components:
+		{
+			//eslint-disable-next-line
+			Graph,
+		},
 		data: function()
 		{
 			return {
 				username: "",
 				user: "",
 				results: false,
+				gClick: false,
 				repos: "",
 				showRepos: false,
 				repoString: "show repositories",
-				stats: ""
+				relevantRepo: "",
+				relevantRepoName: "",
+				stats: null
+			}
+		},
+		computed:
+		{
+			bio: function()
+			{
+				if(this.user.bio == undefined)
+					return "no bio listed"
+				else
+					return this.user.bio
+			},
+			repoFind: function()
+			{
+				for(var i = 0; i < this.repos.length; i++)
+				{
+					if(this.repos[i].name == this.relevantRepoName)
+					{
+						return i
+					}
+				}
+				return null
+			},
+			repoInfo: function()
+			{
+				return this.stats[this.repoFind]
 			}
 		},
 		methods:
 		{
 			find: function()
 			{
+				this.gClick = false
+				this.relevantRepo = ""
+				this.relevantRepoName = ""
 				this.$query.users.getByUsername({username: this.username}).then(result => {
 					this.user = result.data
 				})
@@ -71,10 +115,12 @@
 						//eslint-disable-next-line
 						console.log(this.stats)
 					})
-				})
-				this.results = true;
-				this.showRepos = false
-				this.repoString = "show repositories"
+				}).then(
+
+					this.results = true,
+					this.showRepos = false,
+					this.repoString = "show repositories"
+				)
 			},
 			revealRepos: function()
 			{
@@ -87,6 +133,11 @@
 					this.showRepos = false
 					this.repoString = "show repositories"
 				}
+			},
+			setRepo: function(name)
+			{
+				this.relevantRepoName = name
+				this.gClick = true
 			}
 		}
 	}
