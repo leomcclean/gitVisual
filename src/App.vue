@@ -27,7 +27,13 @@
 				</div>
 			</div>
 			<div v-if="gClick" class="graph_body">
-				<Graph :result="repoInfo"></Graph>
+				<Graph :result="repoInfo" :owner="username"></Graph>
+			</div>
+		</div>
+		<div v-else-if="loading">
+			<div class="lDiv">
+				<img class="githubUser" :src="require('./assets/githubDark.png')"/>
+				<p class="loading1">Loading...</p>
 			</div>
 		</div>
 	</div>
@@ -50,6 +56,7 @@
 				username: "",
 				user: "",
 				results: false,
+				loading: false,
 				gClick: false,
 				repos: "",
 				showRepos: false,
@@ -88,6 +95,8 @@
 		{
 			find: function()
 			{
+				this.loading = true
+				this.results = false
 				this.gClick = false
 				this.relevantRepo = ""
 				this.relevantRepoName = ""
@@ -114,10 +123,10 @@
 						this.stats = stats.map(e => e.data)
 						//eslint-disable-next-line
 						console.log(this.stats)
+						this.loading = false
+						this.results = true
 					})
 				}).then(
-
-					this.results = true,
 					this.showRepos = false,
 					this.repoString = "show repositories"
 				)
