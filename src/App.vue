@@ -5,9 +5,9 @@
 			<input v-model= "username" type="text" class="search" placeholder="find user">
 			<button v-on:click="find" class="submit" type="button">search</button>
 		</div>
-		<div v-if="results" class="body">
+		<div v-if="results" class="bdiv">
 			<div class="result_body">
-				<div class="picture">
+				<div class="pdiv">
 					<img class="image" v-bind:src="user.avatar_url" alt="Profile Picture">
 				</div>
 				<div class="user" >
@@ -15,39 +15,41 @@
 					<h2 class="username">{{ user.login }}</h2>
 					<p class="bio">{{ bio }}</p>
 				</div>
-				<div class="repoDiv">
+				<div class="rDiv">
 					<h2 class="rTitle">Repositories</h2>
-					<p class="repoCount">{{ "Number of Public Repositories: " + user.public_repos }}</p>
-					<ol v-if="showRepos" class="repolist">
+					<p class="rCount">{{ "Number of Public Repositories: " + user.public_repos }}</p>
+					<ol v-if="showRepos" class="rList">
 						<li class="repos" v-for="repo in repos" v-bind:key="repo.name">
-							<a class="repolink" v-on:click="setRepo(repo.name);">{{ repo.name }}</a>
+							<a class="rLink" v-on:click="setRepo(repo.name);">{{ repo.name }}</a>
 						</li>
 					</ol>
-					<button v-on:click="revealRepos" class="repoToggle" type="button">{{ repoString }}</button>
+					<button v-on:click="revealRepos" class="rToggle" type="button">{{ repoString }}</button>
 				</div>
 			</div>
 			<div v-if="gClick" class="graph_body">
-				<Graph :result="repoInfo" :owner="username"></Graph>
+				<Graph :result="repoInfo"  :owner="username"></Graph>
 			</div>
 		</div>
-		<div v-else-if="loading">
-			<div class="lDiv">
-				<img class="githubUser" :src="require('./assets/githubDark.png')"/>
-				<p class="loading1">Loading...</p>
+		<div v-else-if="loading" class="lDiv">
+			<div class="spinner">
+				<div class="rect1"></div>
+				<div class="rect2"></div>
+				<div class="rect3"></div>
+				<div class="rect4"></div>
+				<div class="rect5"></div>
 			</div>
+			<p class="loading1">Loading...</p>
 		</div>
 	</div>
 </template>
 
 <script>
-	//eslint-disable-next-line
 	import Graph from "./components/Graph.vue"
 	export default
 	{
 		name: "app",
 		components:
 		{
-			//eslint-disable-next-line
 			Graph,
 		},
 		data: function()
@@ -155,6 +157,10 @@
 
 <style>
 	@import "./assets/css/base.css";
+	@import "./assets/css/profile.css";
+	@import "./assets/css/graph.css";
+	@import "./assets/css/animations.css";
+	@import "./assets/css/loading.css";
 </style>
 
 

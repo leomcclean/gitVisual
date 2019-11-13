@@ -5,11 +5,14 @@
 	-webkit-font-smoothing: antialiased;
 	width: 100%;
 	height: 100%;
+	background-color: #F5F5F5;
 }
 body
 {
-	background-color: #FFFFFF;
+	background-color: #F5F5F5;
 	margin: 0px;
+	width: auto;
+	height: auto;
 }
 h1
 {
@@ -29,17 +32,17 @@ hr
 	width: 95%;
 	margin-top: 0px;
 }
-.navbar
+div.navbar
 {
-	background-color: #FFFFFF;
+	background-color: #6DACFD;
 	position: relative;
 	display: flex;
 	width: 100%;
 	margin: 0px;
 	border: 0px;
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
-.search
+input.search
 {
 	height: 1em;
 	padding: 7px;
@@ -50,19 +53,19 @@ hr
 	top: 10%;
 	left: calc(100% - 430px);
 	float: right;
-	background-color: #FFFFFF;
-	color: #FFFFFFF;
+	background-color: #E8E8E8;
+	color: #A9A9A9;
 	outline: none;
 }
-.search:focus
+input.search:focus
 {
-	color: #04080F;
+	color: #000000;
 }
-.submit
+button.submit
 {
 	outline: 0px;
 	color: #000000;
-	background-color: #FFFFFF;
+	background-color: #6DACFD;
 	height: 1.75em;
 	padding: 7px;
 	font-size: 1.6em;
@@ -73,223 +76,13 @@ hr
 	left: calc(100% - 120px);
 	border: none;
 }
-.submit:hover
+button.submit:hover
 {
-	color: #A9BCD0;
+	color: #FFFFFF;
 }
-.body
+div.bdiv
 {
 	display: flex;
 	flex-direction: row;
-	width: 100%;
-	height: 100%;
 }
-.ldiv
-{
-	margin: auto;
-	display: block;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	width: 100%;
-	height: 100%;
-}
-.githubUser
-{
-	animation: rotation 2s infinite linear;
-	margin: 0px;
-	width: 12%;
-	height: 12%;
-	z-index: 1;
-}
-.loading1
-{
-	color: #000000;
-	font-size: 2.5em;
-	width: 180px;
-	margin: 0px;
-	z-index: 2;
-}
-.result_body
-{
-	display: inline-flex;
-	flex-direction: column;
-	width: auto;
-	height: auto;
-}
-.picture
-{
-	width: 200px;
-	height: 200px;
-	margin: 10px;
-	margin-bottom: 5px;
-	padding: 10px;
-	background-color: #FFFFFF;
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-.image
-{
-	width: 200px;
-	height: 200px;
-	margin: auto;
-}
-.user
-{
-	display: block;
-	width: 400px;
-	height: auto;
-	margin: 10px;
-	margin-bottom: 5px;
-	padding: 10px;
-	background-color: #FFFFFF;
-	color: #000000;
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-.realname
-{
-	display: table;
-	margin: 0px;
-	margin-right: 0px;
-	font-size: 2em;
-	color: #000000;
-	height: auto;
-}
-.username
-{
-	display: table;
-	margin: 0px;
-	margin-right: 0px;
-	font-size: 1.2em;
-	color: #000000;
-	padding-top: 0px;
-	height: auto;
-}
-.bio
-{
-	display: table;
-	margin: 0px;
-	margin-right: 0px;
-	font-size: .8em;
-	color: #000000;
-	padding-top: 10px;
-	height: auto;
-}
-.repoDiv
-{
-	display: block;
-	width: 400px;
-	height: auto;
-	margin: 10px;
-	margin-bottom: 5px;
-	background-color: #FFFFFF;
-	color: #000000;
-	padding: 10px;
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-.rTitle
-{
-	margin: 0px;
-	color: #000000;
-	font-size: 1.2em;
-	padding-bottom: 5px;
-}
-.repoCount
-{
-	display: table;
-	margin: 0px;
-	margin-right: 0px;
-	font-size: .8em;
-	color: #000000;
-	padding: 0px;
-	height: auto;
-}
-.repoToggle
-{
-	color: #000000;
-	background-color: #FFFFFF;
-	padding: 0px;
-	padding-top: 5px;
-	border: none;
-	outline: none;
-	font-size: 1.2em;
-}
-.repoToggle:hover
-{
-	color: #A9BCD0;
-}
-.repolist
-{
-	padding: 0px;
-	display: block;
-	margin: 0px;
-	list-style-type: none;
-}
-.repolink
-{
-	padding: 2px;
-	font-size: 1em;
-	color: #000000;
-}
-.repolink:hover
-{
-	background-color: #A9BCD0;
-	border-radius: 5px;
-}
-.repos
-{
-	padding-top: 5px;
-	padding-bottom: 5px;
-	border-bottom: 1px solid #FFFFFF;
-}
-.repos:last-child
-{
-	padding-bottom: 0px;
-	border-bottom: none;
-}
-.gDiv
-{
-	display: inline-flex;
-	width: 400px;
-	height: 400px;
-	margin: 10px;
-	margin-left: 0px;
-	margin-bottom: 5px;
-	padding: 10px;
-	background-color: #FFFFFF;
-	color: #000000;
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-.visual
-{
-	display: inline-flex;
-}
-.githubGraph
-{
-	diplay: block;
-	position: rabsolute;
-	animation: rotation 2s infinite linear;
-	margin: auto;
-	margin-top: 100px;
-	width: 30%;
-	height: 30%;
-	top: calc(50% + 24);
-	z-index: 1;
-}
-.loading2
-{
-	color: #FFFFFF;
-	top: 70%;
-	left: 40%;
-	position: absolute;
-	z-index: 2;
-}
-@keyframes rotation
-{
-	from
-	{
-		transform: rotate(0deg);
-	}to
-	{
-		transform: rotate(359deg);
-	}
-}
+

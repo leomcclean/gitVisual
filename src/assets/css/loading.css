@@ -1,0 +1,62 @@
+div.ldiv
+{
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+}
+p.loading1
+{
+	position: absolute;
+	top: 345px;
+	left: calc(50% - 50px);
+	width: 110px;
+	height: 30px;
+	margin: auto;
+	display: block;
+	color: #FFFFFF;
+	font-size: 1.5em;
+}
+div.spinner
+{
+	position: relative;
+	margin: auto;
+	margin-top: 200px;
+	display: block;
+	align-self: center;
+	width: 500px;
+	height: 200px;
+	text-align: center;
+	font-size: 10px;
+}
+div.spinner > div
+{
+	background-color: #6DACFD;
+	height: 100%;
+	width: 30px;
+	display: inline-block;
+	-webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
+			animation: sk-stretchdelay 1.2s infinite ease-in-out;
+}
+div.spinner div.rect2
+{
+	-webkit-animation-delay: -1.1s;
+			animation-delay: -1.1s;
+}
+div.spinner div.rect3
+{
+	-webkit-animation-delay: -1.0s;
+			animation-delay: -1.0s;
+}
+div.spinner div.rect4
+{
+	-webkit-animation-delay: -0.9s;
+			animation-delay: -0.9s;
+}
+div.spinner div.rect5
+{
+	-webkit-animation-delay: -0.8s;
+			animation-delay: -0.8s;
+}

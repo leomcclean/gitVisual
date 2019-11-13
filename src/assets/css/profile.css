@@ -1,0 +1,140 @@
+div.result_body
+{
+	display: flex;
+	flex-direction: column;
+	width: 460px;
+	height: auto;
+}
+div.pdiv
+{
+	-webkit-animation: slide-right 2s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
+			animation: slide-right 2s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
+	width: 220px;
+	height: 220px;
+	align-self: center;
+	margin-top: 20px;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+img.image
+{
+	width: 200px;
+	height: 200px;
+	margin: auto;
+	padding: 10px;
+}
+div.user
+{
+	-webkit-animation: slide-right 2s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
+			animation: slide-right 2s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
+	display: block;
+	width: 400px;
+	height: auto;
+	margin-top: 20px;
+	margin-left: 20px;
+	padding: 10px;
+	background-color: #FFFFFF;
+	color: #000000;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+h2.realname
+{
+	display: table;
+	margin: 0px;
+	margin-right: 0px;
+	font-size: 2em;
+	color: #000000;
+	height: auto;
+}
+h2.username
+{
+	display: table;
+	margin: 0px;
+	margin-right: 0px;
+	font-size: 1.2em;
+	color: #000000;
+	padding-top: 0px;
+	height: auto;
+}
+p.bio
+{
+	display: table;
+	margin: 0px;
+	margin-right: 0px;
+	font-size: 1em;
+	color: #000000;
+	padding-top: 5px;
+	height: auto;
+}
+div.rDiv
+{
+	-webkit-animation: slide-right 2s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
+			animation: slide-right 2s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
+	display: block;
+	width: 400px;
+	height: auto;
+	margin: 20px;
+	margin-right: 0px;
+	background-color: #FFFFFF;
+	color: #000000;
+	padding: 10px;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+h2.rTitle
+{
+	margin: 0px;
+	color: #000000;
+	font-size: 1.2em;
+	padding-bottom: 5px;
+}
+p.rCount
+{
+	display: table;
+	margin: 0px;
+	font-size: 1em;
+	color: #000000;
+	padding: 0px;
+	height: auto;
+}
+button.rToggle
+{
+	color: #000000;
+	background-color: #FFFFFF;
+	padding: 0px;
+	padding-top: 5px;
+	border: none;
+	outline: none;
+	font-size: 1.2em;
+}
+button.rToggle:hover
+{
+	color: #A9BCD0;
+}
+ol.rList
+{
+	padding: 0px;
+	display: block;
+	margin: 0px;
+	list-style-type: none;
+}
+a.rLink
+{
+	padding: 2px;
+	font-size: .9em;
+	color: #000000;
+}
+a.rLink:hover
+{
+	background-color: #FFFFCC;
+	border-radius: 5px;
+}
+li.repos
+{
+	padding-top: 5px;
+	padding-bottom: 5px;
+	border-bottom: 1px solid #FFFFFF;
+}
+li.repos:last-child
+{
+	padding-bottom: 0px;
+	border-bottom: none;
+}
