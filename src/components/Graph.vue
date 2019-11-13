@@ -1,7 +1,8 @@
 <template>
 	<div id="graph">
+		<button v-on:click="makeGraph" class="submit" type="button">make</button>
 		<div v-if="ready" class="gDiv">
-			<svg id="visual" class="visual" width="400" height="400"></svg>
+			<svg id="visual" class="visual" width="600" height="600"></svg>
 		</div>
 		<div v-else class="gDiv">
 			<div class="spinner2">
@@ -17,6 +18,7 @@
 </template>
 
 <script>
+	//eslint-disable-next-line
 	const d3 = require("d3")
 	export default
 	{
@@ -46,12 +48,15 @@
 			},
 			weekArray: function()
 			{
+				return ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+				/*
 				var array = []
-				for(var i = 0; i < 52; i++)
+				for(var i = 0; i < 10; i++)
 				{
 					array.push("Week " + (i + 1))
 				}
 				return array
+				*/
 			},
 			currentWeek: function()
 			{
@@ -62,19 +67,28 @@
 			},
 			yMax: function()
 			{
-				var additions = 0
-				for(var i = 0; i < this.result[this.uIndex].weeks.length; i++)
-					if(additions < this.result[this.uIndex].weeks[i].a)
-						additions = this.result[this.uIndex].weeks[i].a
-				if(additions < 10)
+				var additions = Math.max(...this.additionArray)
+				if(additions < 10 && additions != 0)
 					additions += 10
 				return Math.ceil(additions / 10) * 10
 			},
 			additionArray: function()
 			{
 				var array = []
-				for(var i = 0; i < this.result[this.uIndex].weeks.length; i++)
-					array.push(this.result[this.uIndex].weeks[i].a)
+				var length = this.result[this.uIndex].weeks.length
+				var missing = 10 - length
+				if(missing > 0)
+				{
+					for(let i = 0; i < missing; i++)
+						array.push(0)
+					for(let i = 0; i < length; i++)
+						array.push(this.result[this.uIndex].weeks[i].a)
+				}
+				else
+				{
+					for(let i = length - 1; i > length - 11; i--)
+						array.push(this.result[this.uIndex].weeks[i].a)
+				}
 				return array
 			}
 		},
@@ -82,105 +96,73 @@
 		{
 			makeGraph: function()
 			{
-				// set the dimensions and margins of the graph
-				var margin = {top: 10, right: 30, bottom: 30, left: 40}
-				var width = 460 - margin.left - margin.right
-				var height = 400 - margin.top - margin.bottom
-
-				// append the svg object to the body of the page
-				var svg = d3.select("#visual")
-					.append("svg")
-						.attr("width", width + margin.left + margin.right)
-						.attr("height", height + margin.top + margin.bottom)
-					.append("g")
-						.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-
-				// get the data
-				d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/1_OneNum.csv", function(data)
-				{
-					// X axis: scale and draw:
-					var x = d3.scaleLinear()
-							.domain([0, 1000])		 // can use this instead of 1000 to have the max of data: d3.max(data, function(d) { return +d.price })
-							.range([0, width]);
-					svg.append("g")
-							.attr("transform", "translate(0," + height + ")")
-							.call(d3.axisBottom(x));
-
-					// set the parameters for the histogram
-					var histogram = d3.histogram()
-							.value(function(d) { return d.price; })	 // I need to give the vector of value
-							.domain(x.domain())	// then the domain of the graphic
-							.thresholds(x.ticks(70)); // then the numbers of bins
-
-					// And apply this function to data to get the bins
-					var bins = histogram(data);
-
-					// Y axis: scale and draw:
-					var y = d3.scaleLinear()
-							.range([height, 0]);
-							y.domain([0, d3.max(bins, function(d) { return d.length; })]);	 // d3.hist has to be called before the Y axis obviously
-					svg.append("g")
-							.call(d3.axisLeft(y));
-
-					// append the bar rectangles to the svg element
-					svg.selectAll("rect")
-							.data(bins)
-							.enter()
-							.append("rect")
-								.attr("x", 1)
-								.attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; })
-								.attr("width", function(d) { return x(d.x1) - x(d.x0) -1 ; })
-								.attr("height", function(d) { return height - y(d.length); })
-								.style("fill", "#69b3a2")
-				});
-
-				/*
 				var graph = d3.select("#visual_graph")
 				if(graph)
 					graph.remove()
 
-				var margin = {top: 25, right: 0, bottom: 25, left: 25};
-				var width = 250 - margin.left - margin.right;
-				var height = 400 - margin.top - margin.bottom;
+				var margin = {top: 25, right: 0, bottom: 25, left: 70};
+				var width = 580 - margin.left - margin.right;
+				var height = 600 - margin.top - margin.bottom;
 
 				var svg = d3.select("#visual")
 					.append("svg")
-						.attr("width", "100%")
+						.attr("width", "1000%")
 						.attr("height", "100%")
 						.attr("id", "visual_graph")
 					.append("g").attr("transform", `translate(${margin.left}, ${margin.top})`);
 
 				var x = d3
 					.scaleBand()
-					.domain(this.currentWeek)
+					.domain(10)
 					.range([0, width])
 					.padding(1.0)
 				svg.append("g").attr("transform", `translate(0, ${height})`)
 					.call(d3.axisBottom(x));
 
+				var yMax = this.yMax
 				var y = d3
 					.scaleLinear()
-					.domain([0, this.yMax])
+					.domain([0, yMax])
 					.range([height, 0])
 				svg.append("g")
-					.call(d3.axisLeft(y));
-				/*
-				svg.selectAll()
-					.data(this.additionArray)
-					.enter()
+					.call(d3.axisLeft(y))
+
+				var lengthArray = []
+				var length = width / 11
+				for(var j = 0; j < 10; j++)
+				{
+					lengthArray.push(j * length)
+				}
+				var barWidth = 40
+				var barPadding = 10
+
+				var data = this.additionArray
+				//eslint-disable-next-line
+				var barChart = svg.selectAll("rect")  
+					.data(data)  
+					.enter()  
 					.append("rect")
-					.attr("x", x("") )
-					.attr("y",100)
-					.attr("height", 150)
-					.attr("width", x.bandwidth() )
-					.style("fill", "#5B6170")
-					.style("opacity", 0.5)
-				*/
+					.style("fill", "#6DACFD")
+					.style("opacity", "0.4")
+					.attr("y", function(d)
+					{
+						return height - Math.ceil((d * width) / yMax)
+					})
+					.attr("height", function(d)
+					{
+						return Math.ceil((d * width) / yMax)
+					})
+					.attr("width", barWidth - barPadding)  
+					.attr("transform", function (d, i)
+					{
+						var translate = [lengthArray[i] + (1.6 * barWidth), 0]
+						return "translate("+ translate +")";   
+					})
 			}
 		},
 		mounted: function()
 		{
-			//this.uIndex = this.userIndex
+			this.uIndex = this.userIndex
 			this.makeGraph();
 			this.ready = true
 		}
