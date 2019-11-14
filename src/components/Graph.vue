@@ -1,10 +1,12 @@
 <template>
 	<div id="graph">
-		<button v-on:click="makeGraph" class="submit" type="button">make</button>
-		<div v-if="ready" class="gDiv">
+		<div v-if="ready && !fork" class="gDiv">
 			<svg id="visual" class="visual" width="600" height="600"></svg>
 		</div>
-		<div v-else class="gDiv">
+		<div v-if="fork" class="badGraph">
+			<p v-if="fork" class="fork">Unfortunately the selected user is not a contributer to this repository. This is common with forks.</p>
+		</div>
+		<div v-if="loading" class="gDiv">
 			<div class="spinner2">
 				<div class="rect1"></div>
 				<div class="rect2"></div>
@@ -14,7 +16,7 @@
 			</div>
 			<p class="loading2">Loading...</p>
 		</div>
-		<div class="gInfoDiv">
+		<div v-if="!fork" class="gInfoDiv">
 			<p class="gInfo">This chart holds either the last 10 weeks, or all weeks since repository creation (if less than 10).</p>
 		</div>
 	</div>
@@ -28,13 +30,15 @@
 		props: 
 		{
 			result: Array,
-			owner: String
+			owner: String,
 		},
 		data: function()
 		{
 			return {
 				uIndex: 0,
-				ready: false
+				ready: false,
+				fork: false,
+				loading: false
 			}
 		},
 		computed:
@@ -44,9 +48,11 @@
 				for(var i = 0; i < this.result.length; i++)
 				{
 					if(this.result[i].author.login.toLowerCase() == this.owner.toLowerCase())
+					{
 						return i
+					}
 				}
-				return null
+				return -1
 			},
 			weekArray: function()
 			{
@@ -57,7 +63,7 @@
 					date.setUTCSeconds(this.result[this.uIndex].weeks[i].w)
 					var year = date.getFullYear().toString()
 					year = year.slice(-2)
-					array.push(date.getDate() + "." + date.getMonth() + "." + year)
+					array.push(date.getDate() + "." + (1 + date.getMonth()) + "." + year)
 				}
 				return array
 			},
@@ -97,12 +103,9 @@
 		},
 		methods:
 		{
-			forceRender: function()
-			{
-				this.componentKey += 1
-			},
 			makeGraph: function()
 			{
+				this.loading = true
 				var graph = d3.select("#visual_graph")
 				if(graph)
 					graph.remove()
@@ -171,20 +174,41 @@
 					.attr("text-anchor", "middle")  
 					.style("font-size", "16px")  
 					.text("Weekly Additions by User")
+
+				this.loading = false
 			}
 		},
 		mounted: function()
 		{
 			this.uIndex = this.userIndex
 			this.ready = true
-			this.makeGraph()
+			if(this.uIndex == -1)
+				this.fork = true
+			else
+			{
+				this.fork = false
+				this.$nextTick(() => {
+					this.makeGraph()
+				})
+			}
+		},
+		watch:
+		{
+			result: function(x, y)
+			{
+				this.uIndex = this.userIndex
+				if(this.uIndex == -1)
+					this.fork = true
+				else
+				{
+					this.fork = false
+					this.makeGraph()
+				}
+				return (x, y)
+			}
 		}
 	}
 </script>
-
-<style>
-
-</style>
 
 
 

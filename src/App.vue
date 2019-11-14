@@ -5,6 +5,9 @@
 			<input v-model= "username" type="text" class="search" placeholder="find user">
 			<button v-on:click="find" class="submit" type="button">search</button>
 		</div>
+		<div v-if="error" class="error">
+			<P class="errorMsg">User not found</p>
+		</div>
 		<div v-if="results" class="bdiv">
 			<div class="result_body">
 				<div class="pdiv">
@@ -60,6 +63,7 @@
 				results: false,
 				loading: false,
 				gClick: false,
+				error: false,
 				repos: "",
 				showRepos: false,
 				repoString: "show repositories",
@@ -95,18 +99,30 @@
 		},
 		methods:
 		{
-			find: function()
+			default: function()
 			{
-				if(this.username == "")
-					return false
+				this.error = false
 				this.loading = true
 				this.results = false
 				this.gClick = false
 				this.relevantRepo = ""
 				this.relevantRepoName = ""
+			},
+			find: function()
+			{
+				if(this.username == "")
+					return false
+				this.default()
 				this.$query.users.getByUsername({username: this.username}).then(result => {
 					this.user = result.data
+				}).catch(error => {
+					this.error = true
+					this.loading = false
+					//eslint-disable-next-line
+					console.log(error)
 				})
+				if(this.error)
+					return
 				this.$query.repos.listForUser({
 					username: this.username,
 					type:"owner",
@@ -132,7 +148,10 @@
 				}).then(
 					this.showRepos = false,
 					this.repoString = "show repositories"
-				)
+				).catch(error => {
+					//eslint-disable-next-line
+					console.log(error)
+				})
 			},
 			revealRepos: function()
 			{
