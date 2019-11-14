@@ -36,6 +36,7 @@
 		{
 			return {
 				uIndex: 0,
+				commits: 0,
 				ready: false,
 				fork: false,
 				loading: false
@@ -54,16 +55,42 @@
 				}
 				return -1
 			},
+			mostRecentCommit: function()
+			{
+				var index = this.commits
+				index--
+				while(index > 9)
+				{
+					if(this.result[this.uIndex].weeks[index].a != 0)
+						return index
+					index--
+				}
+				return index
+			},
+			startPoint: function()
+			{
+				var index = this.mostRecentCommit
+				if(index <= 9)
+				{
+					return 0
+				}
+				else
+				{
+					return index - 9
+				}
+			},	
 			weekArray: function()
 			{
 				var array = []
-				for(var i = 0; i < this.commits; i++)
+				var i = this.startPoint
+				while(i <= this.mostRecentCommit)
 				{
 					var date = new Date(0)
 					date.setUTCSeconds(this.result[this.uIndex].weeks[i].w)
 					var year = date.getFullYear().toString()
 					year = year.slice(-2)
 					array.push(date.getDate() + "." + (1 + date.getMonth()) + "." + year)
+					i++
 				}
 				return array
 			},
@@ -77,28 +104,13 @@
 			additionArray: function()
 			{
 				var array = []
-				var length = this.result[this.uIndex].weeks.length
-				var missing = 10 - length
-				if(missing > 0)
+				var i = this.startPoint
+				while(i <= this.mostRecentCommit)
 				{
-					for(let i = 0; i < length; i++)
-					{
-						array.push(this.result[this.uIndex].weeks[i].a)
-					}
-				}
-				else
-				{
-					for(let i = length - 1; i > length - 11; i--)
-						array.push(this.result[this.uIndex].weeks[i].a)
+					array.push(this.result[this.uIndex].weeks[i].a)
+					i++
 				}
 				return array
-			},
-			commits: function()
-			{
-				if(this.result[this.uIndex].weeks.length < 10)
-					return this.result[this.uIndex].weeks.length
-				else
-					return 10
 			}
 		},
 		methods:
@@ -137,13 +149,18 @@
 				svg.append("g")
 					.call(d3.axisLeft(y))
 
+				var bars = 0
+				if(this.commits > 10)
+					bars = 10
+				else
+					bars = this.commits
 				var lengthArray = []
-				var length = width / (this.commits + 1)
-				for(var j = 0; j < this.commits; j++)
+				var length = width / (bars + 1)
+				for(var j = 0; j < bars; j++)
 				{
 					lengthArray.push(j * length)
 				}
-				var barWidth = (1 / (this.commits * 1.0001) * 100)	
+				var barWidth = (1 / (bars * 1.0001) * 200)
 
 				var data = this.additionArray
 				//eslint-disable-next-line
@@ -186,6 +203,7 @@
 				this.fork = true
 			else
 			{
+				this.commits = this.result[this.uIndex].weeks.length
 				this.fork = false
 				this.$nextTick(() => {
 					this.makeGraph()
@@ -201,7 +219,9 @@
 					this.fork = true
 				else
 				{
+					this.commits = this.result[this.uIndex].weeks.length
 					this.fork = false
+					this.makeGraph()
 					this.makeGraph()
 				}
 				return (x, y)

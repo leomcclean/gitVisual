@@ -142,6 +142,8 @@
 					})
 					Promise.all(promises).then(stats => {
 						this.stats = stats.map(e => e.data)
+						//eslint-disable-next-line
+						console.log(this.stats)
 						this.loading = false
 						this.results = true
 					})
