@@ -14,11 +14,13 @@
 			</div>
 			<p class="loading2">Loading...</p>
 		</div>
+		<div class="gInfoDiv">
+			<p class="gInfo">This chart holds either the last 10 weeks, or all weeks since repository creation (if less than 10).</p>
+		</div>
 	</div>
 </template>
 
 <script>
-	//eslint-disable-next-line
 	const d3 = require("d3")
 	export default
 	{
@@ -48,21 +50,15 @@
 			},
 			weekArray: function()
 			{
-				return ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
-				/*
 				var array = []
-				for(var i = 0; i < 10; i++)
+				for(var i = 0; i < this.commits; i++)
 				{
-					array.push("Week " + (i + 1))
+					var date = new Date(0)
+					date.setUTCSeconds(this.result[this.uIndex].weeks[i].w)
+					var year = date.getFullYear().toString()
+					year = year.slice(-2)
+					array.push(date.getDate() + "." + date.getMonth() + "." + year)
 				}
-				return array
-				*/
-			},
-			currentWeek: function()
-			{
-				var array = []
-				for(var i = 0; i < this.result[this.uIndex].weeks.length; i++)
-					array.push(this.weekArray[i])
 				return array
 			},
 			yMax: function()
@@ -79,10 +75,10 @@
 				var missing = 10 - length
 				if(missing > 0)
 				{
-					for(let i = 0; i < missing; i++)
-						array.push(0)
 					for(let i = 0; i < length; i++)
+					{
 						array.push(this.result[this.uIndex].weeks[i].a)
+					}
 				}
 				else
 				{
@@ -90,10 +86,21 @@
 						array.push(this.result[this.uIndex].weeks[i].a)
 				}
 				return array
+			},
+			commits: function()
+			{
+				if(this.result[this.uIndex].weeks.length < 10)
+					return this.result[this.uIndex].weeks.length
+				else
+					return 10
 			}
 		},
 		methods:
 		{
+			forceRender: function()
+			{
+				this.componentKey += 1
+			},
 			makeGraph: function()
 			{
 				var graph = d3.select("#visual_graph")
@@ -113,7 +120,7 @@
 
 				var x = d3
 					.scaleBand()
-					.domain(10)
+					.domain(this.weekArray)
 					.range([0, width])
 					.padding(1.0)
 				svg.append("g").attr("transform", `translate(0, ${height})`)
@@ -128,13 +135,12 @@
 					.call(d3.axisLeft(y))
 
 				var lengthArray = []
-				var length = width / 11
-				for(var j = 0; j < 10; j++)
+				var length = width / (this.commits + 1)
+				for(var j = 0; j < this.commits; j++)
 				{
 					lengthArray.push(j * length)
 				}
-				var barWidth = 40
-				var barPadding = 10
+				var barWidth = (1 / (this.commits * 1.0001) * 100)	
 
 				var data = this.additionArray
 				//eslint-disable-next-line
@@ -152,19 +158,26 @@
 					{
 						return Math.ceil((d * width) / yMax)
 					})
-					.attr("width", barWidth - barPadding)  
+					.attr("width", barWidth)  
 					.attr("transform", function (d, i)
 					{
-						var translate = [lengthArray[i] + (1.6 * barWidth), 0]
+						var translate = [lengthArray[i] + length - (barWidth / 2), 0]
 						return "translate("+ translate +")";   
 					})
+
+				svg.append("text")
+					.attr("x", (width / 2 - 20))	     
+					.attr("y", 0 - (margin.top / 2))
+					.attr("text-anchor", "middle")  
+					.style("font-size", "16px")  
+					.text("Weekly Additions by User")
 			}
 		},
 		mounted: function()
 		{
 			this.uIndex = this.userIndex
-			this.makeGraph();
 			this.ready = true
+			this.makeGraph()
 		}
 	}
 </script>

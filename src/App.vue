@@ -97,6 +97,8 @@
 		{
 			find: function()
 			{
+				if(this.username == "")
+					return false
 				this.loading = true
 				this.results = false
 				this.gClick = false
@@ -116,15 +118,14 @@
 					let promises = []
 					nameList.forEach(e => {
 						promises.push(
-							this.$query.repos.getContributorsStats({
+							this.$query.repos.getContributorsStats(
+								{
 								owner: this.username,
 								repo: e
 							}))
 					})
 					Promise.all(promises).then(stats => {
 						this.stats = stats.map(e => e.data)
-						//eslint-disable-next-line
-						console.log(this.stats)
 						this.loading = false
 						this.results = true
 					})

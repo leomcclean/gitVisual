@@ -7,8 +7,8 @@ div.result_body
 }
 div.pdiv
 {
-	-webkit-animation: slide-right 2s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
-			animation: slide-right 2s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
+	-webkit-animation: slide-right 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
+			animation: slide-right 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
 	width: 220px;
 	height: 220px;
 	align-self: center;
@@ -24,8 +24,8 @@ img.image
 }
 div.user
 {
-	-webkit-animation: slide-right 2s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
-			animation: slide-right 2s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
+	-webkit-animation: slide-right 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
+			animation: slide-right 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
 	display: block;
 	width: 400px;
 	height: auto;
@@ -67,8 +67,8 @@ p.bio
 }
 div.rDiv
 {
-	-webkit-animation: slide-right 2s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
-			animation: slide-right 2s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
+	-webkit-animation: slide-right 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
+			animation: slide-right 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
 	display: block;
 	width: 400px;
 	height: auto;

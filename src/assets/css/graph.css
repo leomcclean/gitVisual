@@ -1,11 +1,12 @@
 div.gDiv
 {
-	-webkit-animation: slide-left 2s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
-			animation: slide-left 2s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
+	-webkit-animation: slide-left 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
+			animation: slide-left 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
 	display: inline-flex;
 	width: 600px;
 	height: 600px;
 	margin-top: 20px;
+	margin-left: 20px;
 	padding: 10px;
 	background-color: #FFFFFF;
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -15,21 +16,40 @@ svg.visual
 	display: inline-flex;
 	color: #000000;
 }
+div.gInfoDiv
+{
+	-webkit-animation: slide-left 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
+			animation: slide-left 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
+	display: inline-flex;
+	width: 600px;
+	height: 20px;
+	margin-top: 20px;
+	margin-left: 20px;
+	padding: 10px;
+	background-color: #FFFFFF;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+p.gInfo
+{
+	color: #000000;
+	font-size: .88em;
+	margin: 0px;
+}
 p.loading2
 {
 	position: absolute;
 	display: inline-block;
 	color: #FFFFFF;
 	font-size: 1.3em;
-	top: 175px;
-	width: 90px;
-	left: 165px;
+	top: 275px;
+	width: 165px;
+	left: 265px;
 }
 div.spinner2
 {
 	position: relative;
 	margin: auto;
-	margin-top: 100px;
+	margin-top: 200px;
 	display: block;
 	align-self: center;
 	width: 500px;
