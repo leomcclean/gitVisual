@@ -60,15 +60,15 @@
 			return {
 				username: "",
 				user: "",
+				repos: "",
+				relevantRepo: "",
+				relevantRepoName: "",
 				results: false,
 				loading: false,
 				gClick: false,
 				error: false,
-				repos: "",
 				showRepos: false,
 				repoString: "show repositories",
-				relevantRepo: "",
-				relevantRepoName: "",
 				stats: null
 			}
 		},

@@ -1,23 +1,25 @@
 <template>
 	<div id="graph">
-		<div v-if="ready && !fork" class="gDiv">
-			<svg id="visual" class="visual" width="600" height="600"></svg>
-		</div>
-		<div v-if="fork" class="badGraph">
-			<p v-if="fork" class="fork">Unfortunately the selected user is not a contributer to this repository. This is common with forks.</p>
-		</div>
-		<div v-if="loading" class="gDiv">
-			<div class="spinner2">
-				<div class="rect1"></div>
-				<div class="rect2"></div>
-				<div class="rect3"></div>
-				<div class="rect4"></div>
-				<div class="rect5"></div>
+		<div class="gDiv">
+			<div v-if="ready && !fork" class="graph">
+				<svg id="visual" class="visual" width="600" height="600"></svg>
 			</div>
-			<p class="loading2">Loading...</p>
-		</div>
-		<div v-if="!fork" class="gInfoDiv">
-			<p class="gInfo">This chart holds either the last 10 weeks, or all weeks since repository creation (if less than 10).</p>
+			<div v-if="fork" class="badGraph">
+				<p v-if="fork" class="fork">Unfortunately the selected user is not a contributer to this repository. This is common with forks, but could also be because of an </p>
+			</div>
+			<div v-if="loading" class="gDiv">
+				<div class="spinner2">
+					<div class="rect1"></div>
+					<div class="rect2"></div>
+					<div class="rect3"></div>
+					<div class="rect4"></div>
+					<div class="rect5"></div>
+				</div>
+				<p class="loading2">Loading...</p>
+			</div>
+			<div v-if="!fork" class="gInfoDiv">
+				<p class="gInfo">This chart shows up to the 10 most recent consecutive weeks with additions, and is relevantly truncated if the repository is new, or hasn't been modified in a significant time.</p>
+			</div>
 		</div>
 	</div>
 </template>
@@ -115,6 +117,23 @@
 		},
 		methods:
 		{
+			truncateArray: function(array, x)
+			{
+				var i = 0
+				if(x == 0)
+					i = array.length
+				else
+					i = x
+
+				while(i > 0)
+				{
+					if(array[i - 1] == 0)
+						i--
+					else
+						break
+				}
+				return array.slice(0,i)
+			},
 			makeGraph: function()
 			{
 				this.loading = true
@@ -133,9 +152,13 @@
 						.attr("id", "visual_graph")
 					.append("g").attr("transform", `translate(${margin.left}, ${margin.top})`);
 
+				var data = this.truncateArray(this.additionArray, 0)
+				this.commits = data.length
+
+				var domain = this.truncateArray(this.weekArray, this.commits)
 				var x = d3
 					.scaleBand()
-					.domain(this.weekArray)
+					.domain(domain)
 					.range([0, width])
 					.padding(1.0)
 				svg.append("g").attr("transform", `translate(0, ${height})`)
@@ -162,7 +185,6 @@
 				}
 				var barWidth = (1 / (bars * 1.0001) * 200)
 
-				var data = this.additionArray
 				//eslint-disable-next-line
 				var barChart = svg.selectAll("rect")  
 					.data(data)  
@@ -190,7 +212,7 @@
 					.attr("y", 0 - (margin.top / 2))
 					.attr("text-anchor", "middle")  
 					.style("font-size", "16px")  
-					.text("Weekly Additions by User")
+					.text(`Number of Additions per Week by ${this.result[this.uIndex].author.login}`)
 
 				this.loading = false
 			}

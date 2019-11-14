@@ -1,5 +1,10 @@
 div.gDiv
 {
+	display: flex;
+	flex-direction: column;
+}
+div.graph
+{
 	-webkit-animation: slide-left .5s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
 			animation: slide-left .5s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
 	display: inline-flex;
@@ -8,7 +13,7 @@ div.gDiv
 	margin-top: 20px;
 	padding: 10px;
 	background-color: #FFFFFF;
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);	
 }
 svg.visual
 {
@@ -38,7 +43,7 @@ div.gInfoDiv
 			animation: slide-left .5s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
 	display: inline-flex;
 	width: 600px;
-	height: 20px;
+	height: 38px;
 	margin-top: 20px;
 	padding: 10px;
 	background-color: #FFFFFF;
