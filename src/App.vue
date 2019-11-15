@@ -30,7 +30,7 @@
 				</div>
 			</div>
 			<div v-if="gClick" class="graph_body">
-				<Graph :result="repoInfo"  :owner="username"></Graph>
+				<Graph :result="repoInfo"  :owner="username" :repo="relevantRepoName"></Graph>
 			</div>
 		</div>
 		<div v-else-if="loading" class="lDiv">
@@ -143,7 +143,7 @@
 					Promise.all(promises).then(stats => {
 						this.stats = stats.map(e => e.data)
 						//eslint-disable-next-line
-						console.log(this.stats)
+						//console.log(this.stats)
 						this.loading = false
 						this.results = true
 					})

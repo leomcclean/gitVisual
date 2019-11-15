@@ -1,24 +1,17 @@
 <template>
 	<div id="graph">
-		<div class="gDiv">
-			<div v-if="ready && !fork" class="graph">
+		<div class="gDiv" id="yeet">
+			<div v-show="!fork" class="graph">
 				<svg id="visual" class="visual" width="600" height="600"></svg>
 			</div>
-			<div v-if="fork" class="badGraph">
-				<p v-if="fork" class="fork">Unfortunately the selected user is not a contributer to this repository. This is common with forks, but could also be because of an </p>
+			<div v-show="fork" class="badGraph">
+				<p class="fork">Unfortunately the selected user is not a contributer to this repository. This is common with forks, but could also be because of an </p>
 			</div>
-			<div v-if="loading" class="gDiv">
-				<div class="spinner2">
-					<div class="rect1"></div>
-					<div class="rect2"></div>
-					<div class="rect3"></div>
-					<div class="rect4"></div>
-					<div class="rect5"></div>
-				</div>
-				<p class="loading2">Loading...</p>
-			</div>
-			<div v-if="!fork" class="gInfoDiv">
+			<div v-show="!fork" class="gInfoDiv">
 				<p class="gInfo">This chart shows up to the 10 most recent consecutive weeks with additions, and is relevantly truncated if the repository is new, or hasn't been modified in a significant time.</p>
+			</div>
+			<div v-show="!fork && average" class="gInfoDiv">
+				<p class="gInfo">The orange bar represents the average additions in any given week by all contributors that aren't the selected user, and the blue bar represents the selected users' additions.</p>
 			</div>
 		</div>
 	</div>
@@ -33,15 +26,15 @@
 		{
 			result: Array,
 			owner: String,
+			repo: String
 		},
 		data: function()
 		{
 			return {
 				uIndex: 0,
 				commits: 0,
-				ready: false,
 				fork: false,
-				loading: false
+				average: false
 			}
 		},
 		computed:
@@ -87,21 +80,10 @@
 				var i = this.startPoint
 				while(i <= this.mostRecentCommit)
 				{
-					var date = new Date(0)
-					date.setUTCSeconds(this.result[this.uIndex].weeks[i].w)
-					var year = date.getFullYear().toString()
-					year = year.slice(-2)
-					array.push(date.getDate() + "." + (1 + date.getMonth()) + "." + year)
+					array.push(this.getWeek(this.result[this.uIndex].weeks[i].w))
 					i++
 				}
 				return array
-			},
-			yMax: function()
-			{
-				var additions = Math.max(...this.additionArray)
-				if(additions < 10 && additions != 0)
-					additions += 10
-				return Math.ceil(additions / 10) * 10
 			},
 			additionArray: function()
 			{
@@ -117,6 +99,14 @@
 		},
 		methods:
 		{
+			getWeek: function(timestamp)
+			{
+				var date = new Date(0)
+				date.setUTCSeconds(timestamp)
+				var year = date.getFullYear().toString()
+				year = year.slice(-2)
+				return date.getDate() + "." + (1 + date.getMonth()) + "." + year
+			},
 			truncateArray: function(array, x)
 			{
 				var i = 0
@@ -134,9 +124,44 @@
 				}
 				return array.slice(0,i)
 			},
+			averageAdditions: function()
+			{
+				var array = []
+				for(var i = 0; i < this.result.length; i++)
+				{
+					if(i != this.uIndex)
+					{
+						var j = this.startPoint
+						var average = 0
+						while(j <= this.mostRecentCommit)
+						{
+							average += this.result[i].weeks[j].a
+							j++
+						}
+						average /= (this.mostRecentCommit - this.startPoint)
+						array.push(Math.ceil(average))
+					}
+				}
+				return array
+			},
+			yMax: function(x, y)
+			{
+				var maxUserAdditions = Math.max(...x)
+				var maxAverageAdditions = Math.max(...y)
+				var max = Math.max(maxUserAdditions, maxAverageAdditions)
+				max = Math.pow(10, Number(String(max).length) - 1) * Number(String(max).charAt(0))
+				return (max * 1.5)
+			},
 			makeGraph: function()
 			{
-				this.loading = true
+				var data = this.truncateArray(this.additionArray, 0)
+				var average = this.averageAdditions()
+				if(average == undefined || average.length == 0)
+					average = [0]
+				this.commits = data.length
+				var domain = this.truncateArray(this.weekArray, this.commits)
+				var yMax = this.yMax(data, average)
+
 				var graph = d3.select("#visual_graph")
 				if(graph)
 					graph.remove()
@@ -147,15 +172,11 @@
 
 				var svg = d3.select("#visual")
 					.append("svg")
-						.attr("width", "1000%")
+						.attr("width", "100%")
 						.attr("height", "100%")
 						.attr("id", "visual_graph")
 					.append("g").attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-				var data = this.truncateArray(this.additionArray, 0)
-				this.commits = data.length
-
-				var domain = this.truncateArray(this.weekArray, this.commits)
 				var x = d3
 					.scaleBand()
 					.domain(domain)
@@ -164,7 +185,6 @@
 				svg.append("g").attr("transform", `translate(0, ${height})`)
 					.call(d3.axisBottom(x));
 
-				var yMax = this.yMax
 				var y = d3
 					.scaleLinear()
 					.domain([0, yMax])
@@ -179,54 +199,126 @@
 					bars = this.commits
 				var lengthArray = []
 				var length = width / (bars + 1)
-				for(var j = 0; j < bars; j++)
+				for(var j = 0; j < bars * 2; j++)
 				{
 					lengthArray.push(j * length)
 				}
 				var barWidth = (1 / (bars * 1.0001) * 200)
+				var subtract = barWidth / 4
+				if(Math.max(...average) != 0)
+					subtract = barWidth /2
+				subtract = Math.ceil(subtract)
+
+				var tooltip = d3.select("#yeet")
+					.append("div")	
+					.attr("class", "tooltip")
+
+				//eslint-disable-next-line
+				var mouseover = function(d)
+				{
+					tooltip
+						.style("visibility", "visible")
+					d3.select(this)
+						.style("stroke", "black")
+						.style("opacity", .6)
+				}
+				//eslint-disable-next-line
+				var mousemove = function(d)
+				{
+					tooltip
+						.html(`<p class='y'>${d}</p>`)
+						.attr("width", "2px")
+						.style("left", (event.pageX - 80) + "px")
+						.style("top", (event.pageY - 15) + "px")
+						.style("z-index", "99 !important")
+				}
+				//eslint-disable-next-line			
+				var mouseout = function(d)
+				{		
+					tooltip	
+						.style("visibility", "hidden")
+					d3.select(this)
+						.style("stroke", "none")
+						.style("opacity", .4)
+				}
 
 				//eslint-disable-next-line
 				var barChart = svg.selectAll("rect")  
 					.data(data)  
 					.enter()  
 					.append("rect")
-					.style("fill", "#6DACFD")
-					.style("opacity", "0.4")
-					.attr("y", function(d)
-					{
-						return height - Math.ceil((d * width) / yMax)
-					})
-					.attr("height", function(d)
-					{
-						return Math.ceil((d * width) / yMax)
-					})
-					.attr("width", barWidth)  
-					.attr("transform", function (d, i)
-					{
-						var translate = [lengthArray[i] + length - (barWidth / 2), 0]
-						return "translate("+ translate +")";   
-					})
+						.style("fill", "#6DACFD")
+						.style("opacity", "0.4")
+						.attr("id", "barchart")
+						.attr("y", function(d)
+						{
+							return height - Math.ceil((d * height) / yMax)
+						})
+						.attr("height", function(d)
+						{
+							return Math.ceil((d * height) / yMax)
+						})
+						.attr("width", barWidth / 2)  
+						.attr("transform", function (d, i)
+						{
+							var translate = [lengthArray[i] + length - subtract, 0]
+							return "translate("+ translate +")";   
+						})
+					.on("mouseover", mouseover)
+					.on("mousemove", mousemove)
+					.on("mouseout", mouseout)
+
+				if(Math.max(...average) != 0)
+				{
+					this.average = true
+					data = data.concat(average)
+					//eslint-disable-next-line
+					var barChart2 = svg.selectAll("rect") 
+						.data(data)
+						.enter()  
+						.append("rect")
+							.style("fill", "#F8B878")
+							.style("opacity", ".4")
+							.attr("id", "barchart")
+							.attr("y", function(d)
+							{	
+								return height - Math.ceil((d * height) / yMax)
+							})
+							.attr("height", function(d)
+							{
+								return Math.ceil((d * height) / yMax)
+							})
+							.attr("width", barWidth / 2)  
+							.attr("transform", function (d, i)
+							{
+								var translate = [lengthArray[i - average.length] + length, 0]
+								return "translate("+ translate +")";   
+							})
+						.on("mouseover", mouseover)
+						.on("mousemove", mousemove)
+						.on("mouseout", mouseout)
+				}else
+				{
+					this.average = false
+				}
 
 				svg.append("text")
 					.attr("x", (width / 2 - 20))	     
 					.attr("y", 0 - (margin.top / 2))
 					.attr("text-anchor", "middle")  
 					.style("font-size", "16px")  
-					.text(`Number of Additions per Week by ${this.result[this.uIndex].author.login}`)
-
-				this.loading = false
+					.text(`Number of additions by ${this.owner} per week in ${this.repo}`)
 			}
 		},
 		mounted: function()
 		{
 			this.uIndex = this.userIndex
-			this.ready = true
+			this.fork = false
 			if(this.uIndex == -1)
 				this.fork = true
 			else
 			{
 				this.commits = this.result[this.uIndex].weeks.length
-				this.fork = false
 				this.$nextTick(() => {
 					this.makeGraph()
 				})
@@ -237,13 +329,12 @@
 			result: function(x, y)
 			{
 				this.uIndex = this.userIndex
+				this.fork = false
 				if(this.uIndex == -1)
 					this.fork = true
 				else
 				{
 					this.commits = this.result[this.uIndex].weeks.length
-					this.fork = false
-					this.makeGraph()
 					this.makeGraph()
 				}
 				return (x, y)
