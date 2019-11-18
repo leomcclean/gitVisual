@@ -149,8 +149,8 @@
 				var maxUserAdditions = Math.max(...x)
 				var maxAverageAdditions = Math.max(...y)
 				var max = Math.max(maxUserAdditions, maxAverageAdditions)
-				max = Math.pow(10, Number(String(max).length) - 1) * Number(String(max).charAt(0))
-				return (max * 1.5)
+				var round = Math.pow(10, Number(String(max).length) - 1)
+				return Math.ceil(max/round)*round
 			},
 			makeGraph: function()
 			{
