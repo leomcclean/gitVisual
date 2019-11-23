@@ -2,6 +2,8 @@ div.gDiv
 {
 	display: flex;
 	flex-direction: column;
+	padding: 20px;
+	padding-left: 10px;
 }
 div.graph
 {
@@ -10,7 +12,7 @@ div.graph
 	display: inline-flex;
 	width: 600px;
 	height: 600px;
-	margin-top: 20px;
+	margin-bottom: 20px;
 	padding: 10px;
 	background-color: #FFFFFF;
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);	
@@ -26,8 +28,7 @@ div.badGraph
 			animation: slide-left .5s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
 	display: inline-flex;
 	width: 600px;
-	height: 50px;
-	margin-top: 20px;
+	height: 76px;
 	padding: 10px;
 	background-color: #FFFFFF;
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -43,11 +44,15 @@ div.gInfoDiv
 			animation: slide-left .5s cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s both;
 	display: inline-flex;
 	width: 600px;
-	height: 38px;
-	margin-top: 20px;
+	height: 54px;
+	margin-bottom: 20px;
 	padding: 10px;
 	background-color: #FFFFFF;
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+#average
+{
+	margin-bottom: 0px;
 }
 p.gInfo
 {

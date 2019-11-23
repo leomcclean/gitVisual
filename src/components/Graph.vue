@@ -1,18 +1,16 @@
 <template>
-	<div id="graph">
-		<div class="gDiv" id="yeet">
-			<div v-show="!fork" class="graph">
-				<svg id="visual" class="visual" width="600" height="600"></svg>
-			</div>
-			<div v-show="fork" class="badGraph">
-				<p class="fork">Unfortunately the selected user is not a contributer to this repository. This is common with forks, but could also be because of an </p>
-			</div>
-			<div v-show="!fork" class="gInfoDiv">
-				<p class="gInfo">This chart shows up to the 10 most recent consecutive weeks with additions, and is relevantly truncated if the repository is new, or hasn't been modified in a significant time.</p>
-			</div>
-			<div v-show="!fork && average" class="gInfoDiv">
-				<p class="gInfo">The orange bar represents the average additions in any given week by all contributors that aren't the selected user, and the blue bar represents the selected users' additions.</p>
-			</div>
+	<div class="gDiv" id="graph">
+		<div v-show="!fork" class="graph">
+			<svg id="visual" class="visual" width="600" height="600"></svg>
+		</div>
+		<div v-show="fork" class="badGraph">
+			<p class="fork">Unfortunately it seems the selected user has not committed to this repository. This repository could be a fork, or it may not have any committs yet, or the repository has too many contributors to handle.</p>
+		</div>
+		<div v-show="!fork" class="gInfoDiv">
+			<p class="gInfo">This chart shows up to the 10 most recent weeks with additions, limited by how many weeks the selected user has made additions. The scale is limited to just over the maximum additions in a given week in the set. Please note this can make large disrepancies difficult to see.</p>
+		</div>
+		<div v-show="!fork && average" class="gInfoDiv" id="average">
+			<p class="gInfo">The orange bar represents the average additions in any given week by all contributors that aren't the selected user, and the blue bar represents the selected users' additions. Again, the weeks shown are only weeks where the selected user has made additions.</p>
 		</div>
 	</div>
 </template>
@@ -24,6 +22,7 @@
 		name:"Graph",
 		props: 
 		{
+			// the three important variables passed through from App.vue on clicking a repo
 			result: Array,
 			owner: String,
 			repo: String
@@ -31,8 +30,10 @@
 		data: function()
 		{
 			return {
+				// uIndex stores the userIndex computed, so we don't have to continuously compute
 				uIndex: 0,
 				commits: 0,
+				// fork defines if a user has forked but not committed to a repository, average defines if there are other contributors
 				fork: false,
 				average: false
 			}
@@ -43,133 +44,113 @@
 			{
 				for(var i = 0; i < this.result.length; i++)
 				{
+					// we compare with the lower case options because while gitHub stores usernames as case-sensitive, they are not in fact case-sensitive in regards to our queries
 					if(this.result[i].author.login.toLowerCase() == this.owner.toLowerCase())
 					{
 						return i
 					}
 				}
+				// this tells us the repo is empty of commits by our selected user
 				return -1
 			},
-			mostRecentCommit: function()
-			{
-				var index = this.commits
-				index--
-				while(index > 9)
-				{
-					if(this.result[this.uIndex].weeks[index].a != 0)
-						return index
-					index--
-				}
-				return index
-			},
-			startPoint: function()
-			{
-				var index = this.mostRecentCommit
-				if(index <= 9)
-				{
-					return 0
-				}
-				else
-				{
-					return index - 9
-				}
-			},	
-			weekArray: function()
+			weeks: function()
 			{
 				var array = []
-				var i = this.startPoint
-				while(i <= this.mostRecentCommit)
-				{
-					array.push(this.getWeek(this.result[this.uIndex].weeks[i].w))
-					i++
-				}
-				return array
-			},
-			additionArray: function()
-			{
-				var array = []
-				var i = this.startPoint
-				while(i <= this.mostRecentCommit)
-				{
-					array.push(this.result[this.uIndex].weeks[i].a)
-					i++
-				}
-				return array
+				var length = this.result[this.uIndex].weeks.length
+				// compute the 10 most recent weeks of additions, if there have been 10
+				// we only look for weeks where the selected user has committed
+				for(var i = length - 1; i > -1; i--)
+					if(this.result[this.uIndex].weeks[i].a > 0)
+					{
+						array.push(i)
+						// once we have found 10 such weeks, we return those
+						// this is to ensure our graph is well-spaced and visually pleasing
+						if(array.length == 10)
+							return array.reverse()
+					}
+				return array.reverse()
 			}
 		},
 		methods:
 		{
 			getWeek: function(timestamp)
 			{
+				// a simple convert from unix timestamp to a nicely formatted dd.mm.yy String
 				var date = new Date(0)
 				date.setUTCSeconds(timestamp)
 				var year = date.getFullYear().toString()
 				year = year.slice(-2)
 				return date.getDate() + "." + (1 + date.getMonth()) + "." + year
 			},
-			truncateArray: function(array, x)
+			makeArray: function(weeks, input)
 			{
-				var i = 0
-				if(x == 0)
-					i = array.length
-				else
-					i = x
-
-				while(i > 0)
-				{
-					if(array[i - 1] == 0)
-						i--
-					else
-						break
-				}
-				return array.slice(0,i)
-			},
-			averageAdditions: function()
-			{
+				// uses eval(), so this is probably a terrible way to do this
+				// however we control the method calls, and it allows us to remove an essentially duplicate method
 				var array = []
-				for(var i = 0; i < this.result.length; i++)
+				for(var i = 0; i < weeks.length; i++)
+					array.push(eval(input))
+				return array
+			},
+			averageAdditions: function(weeks)
+			{
+				// iterating through all other contributors (if any) and finding the average additions per week that the selected user has committed
+				var array = []
+				for(var i = 0; i < weeks.length; i++)
 				{
-					if(i != this.uIndex)
+					var average = 0
+					for(var j = 0; j < this.result.length; j++)
 					{
-						var j = this.startPoint
-						var average = 0
-						while(j <= this.mostRecentCommit)
+						if(j != this.uIndex)
 						{
-							average += this.result[i].weeks[j].a
-							j++
+							average += this.result[j].weeks[weeks[i]].a
 						}
-						average /= (this.mostRecentCommit - this.startPoint)
-						array.push(Math.ceil(average))
 					}
+					average = average / this.result.length
+					// avoid pushing a number with a decimal place, that accuracy is not necessary
+					array.push(Math.ceil(average))
 				}
 				return array
 			},
 			yMax: function(x, y)
 			{
+				// finding the largest possible y Value so we correctly set our axis height
+				// first we compare our average and user additions, finding the max of all additions
 				var maxUserAdditions = Math.max(...x)
 				var maxAverageAdditions = Math.max(...y)
 				var max = Math.max(maxUserAdditions, maxAverageAdditions)
+				// ensure that our max Y is generally (except for max < 10) bigger than our actual max additions value
+				// this allows us to have a visually pleasing graph, where no bars reach the top
 				var round = Math.pow(10, Number(String(max).length) - 1)
-				return Math.ceil(max/round)*round
+				return Math.ceil(max / round) * round
 			},
 			makeGraph: function()
 			{
-				var data = this.truncateArray(this.additionArray, 0)
-				var average = this.averageAdditions()
+				// get relevant weeks
+				var weeks = this.weeks
+				// an array of all the user additions we will display
+				var data = this.makeArray(weeks, "this.result[this.uIndex].weeks[weeks[i]].a")
+				// get the domains, ie the X-axis values our bars will be placed over
+				var formattedWeeks = this.makeArray(weeks, "this.getWeek(this.result[this.uIndex].weeks[weeks[i]].w)")
+				// get our average array (if there are other contributors that have made additions in the same weeks)
+				var average = this.averageAdditions(weeks)
 				if(average == undefined || average.length == 0)
 					average = [0]
 				this.commits = data.length
-				var domain = this.truncateArray(this.weekArray, this.commits)
+				// finally find our Y-axis height
 				var yMax = this.yMax(data, average)
 
+				// after gathering all relevant data we know use d3.js to graph our bar chart
+				// if we already have a graph drawn, remove it
 				var graph = d3.select("#visual_graph")
 				if(graph)
 					graph.remove()
 
+				// size of the graph is fixed to fit our div element
 				var margin = {top: 25, right: 0, bottom: 25, left: 70};
 				var width = 580 - margin.left - margin.right;
 				var height = 600 - margin.top - margin.bottom;
 
+				// relevant attributes for the element the graph will occupy
 				var svg = d3.select("#visual")
 					.append("svg")
 						.attr("width", "100%")
@@ -177,14 +158,16 @@
 						.attr("id", "visual_graph")
 					.append("g").attr("transform", `translate(${margin.left}, ${margin.top})`);
 
+				// setting our X-axis, the ticks being the weeks
 				var x = d3
 					.scaleBand()
-					.domain(domain)
+					.domain(formattedWeeks)
 					.range([0, width])
 					.padding(1.0)
 				svg.append("g").attr("transform", `translate(0, ${height})`)
 					.call(d3.axisBottom(x));
 
+				// setting our Y-axis, the ticks being a lienar scale from 0 to our maximum Y from earlier
 				var y = d3
 					.scaleLinear()
 					.domain([0, yMax])
@@ -209,7 +192,7 @@
 					subtract = barWidth /2
 				subtract = Math.ceil(subtract)
 
-				var tooltip = d3.select("#yeet")
+				var tooltip = d3.select("#Graph")
 					.append("div")	
 					.attr("class", "tooltip")
 
@@ -220,7 +203,7 @@
 						.style("visibility", "visible")
 					d3.select(this)
 						.style("stroke", "black")
-						.style("opacity", .6)
+						.style("opacity", 1)
 				}
 				//eslint-disable-next-line
 				var mousemove = function(d)
@@ -239,7 +222,7 @@
 						.style("visibility", "hidden")
 					d3.select(this)
 						.style("stroke", "none")
-						.style("opacity", .4)
+						.style("opacity", .8)
 				}
 
 				//eslint-disable-next-line
@@ -248,7 +231,7 @@
 					.enter()  
 					.append("rect")
 						.style("fill", "#6DACFD")
-						.style("opacity", "0.4")
+						.style("opacity", "0.8")
 						.attr("id", "barchart")
 						.attr("y", function(d)
 						{
@@ -278,7 +261,7 @@
 						.enter()  
 						.append("rect")
 							.style("fill", "#F8B878")
-							.style("opacity", ".4")
+							.style("opacity", ".8")
 							.attr("id", "barchart")
 							.attr("y", function(d)
 							{	

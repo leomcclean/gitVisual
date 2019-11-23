@@ -69,13 +69,14 @@
 				error: false,
 				showRepos: false,
 				repoString: "show repositories",
-				stats: null
+				stats: ""
 			}
 		},
 		computed:
 		{
 			bio: function()
 			{
+				// handling an empty bio
 				if(this.user.bio == undefined)
 					return "no bio listed"
 				else
@@ -83,6 +84,7 @@
 			},
 			repoFind: function()
 			{
+				// linking our user query to our repository query
 				for(var i = 0; i < this.repos.length; i++)
 				{
 					if(this.repos[i].name == this.relevantRepoName)
@@ -94,6 +96,8 @@
 			},
 			repoInfo: function()
 			{
+				//eslint-disable-next-line
+				//console.log(this.stats[this.repoFind])
 				return this.stats[this.repoFind]
 			}
 		},
@@ -101,6 +105,7 @@
 		{
 			default: function()
 			{
+				// a basic reset function to clean up the find() function a little
 				this.error = false
 				this.loading = true
 				this.results = false
@@ -110,9 +115,11 @@
 			},
 			find: function()
 			{
+				// checking the user has typed something
 				if(this.username == "")
 					return false
 				this.default()
+				// querying using octokit/rest.js
 				this.$query.users.getByUsername({username: this.username}).then(result => {
 					this.user = result.data
 				}).catch(error => {
@@ -123,12 +130,15 @@
 				})
 				if(this.error)
 					return
+				// a second query to find repository information for the user
 				this.$query.repos.listForUser({
+					// we're looking for repos that are owned by the user, listed in the order they've were created
 					username: this.username,
 					type:"owner",
 					sort: "created",
 					direction: "desc"
 				}).then(result => {
+					// we use promises to retrieve all of our queries (1 per repo) at the same time
 					this.repos = result.data
 					let nameList = result.data.map(e => e.name)
 					let promises = []
@@ -140,14 +150,14 @@
 								repo: e
 							}))
 					})
+					// setting loose our queries together
 					Promise.all(promises).then(stats => {
 						this.stats = stats.map(e => e.data)
-						//eslint-disable-next-line
-						//console.log(this.stats)
 						this.loading = false
 						this.results = true
 					})
 				}).then(
+					// changing the page to show we've retrieved repositories
 					this.showRepos = false,
 					this.repoString = "show repositories"
 				).catch(error => {
@@ -157,6 +167,7 @@
 			},
 			revealRepos: function()
 			{
+				// if the user wishes to see the list of repositories, do so
 				if(this.showRepos == false)
 				{
 					this.showRepos = true
@@ -169,12 +180,12 @@
 			},
 			setRepo: function(name)
 			{
+				// occurs on clicking a repository, and starts the process to display a graph
 				this.relevantRepoName = name
 				this.gClick = true
 			}
 		}
 	}
-
 </script>
 
 <style>
